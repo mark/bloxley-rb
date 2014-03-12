@@ -1,65 +1,65 @@
 class Bloxley::TileLibrary < Bloxley::Base
 
-  #   var tiles:Array;
+  ################
+  #              #
+  # Declarations #
+  #              #
+  ################
+  
+  attr_reader :tiles
 
-  #   public function BXTileLibrary(tiles:Array) {
-  #     this.tiles = tiles;
-  #   }
+  ###############
+  #             #
+  # Constructor #
+  #             #
+  ###############
+  
+  def initialize(tiles)
+    @tiles = {}
+    @default_tile = tiles.first
 
-  #   public function addTile(tile:BXTile) {
-  #       tiles.push(tile);
-  #   }
+    tiles.each { |tile| add_tile tile }
+  end
 
-  #   public function defaultKey():String {
-  #     return tiles[0].key();
-  #   }
+  ####################
+  #                  #
+  # Instance Methods #
+  #                  #
+  ####################
+  
+  def add_tile(tile)
+    @default_tile ||= tile
+    tiles[ tile.key ] = tile
+  end
 
-  #   public function keyForTile(tile:String):String {
-  #       // If we don't know what kind of tile it is yet:
-  #       if (tile == null) return defaultKey();
-        
-  #       // Try to match a tile we know about:
-  #     for (var i = 0; i < tiles.length; i++) {
-  #       if (tiles[i].actsAsTile(tile)){
-  #         return tiles[i].key();
-  #       }
-  #     }
-      
-  #     // If it didn't match a known tile:
-  #     return defaultKey();
-  #   }
+  def default_key
+    @default_tile ? @default_tile.key : nil
+  end
 
-  #   public function frameForKey(key:String):String {
-  #     for (var i = 0; i < tiles.length; i++) {
-  #       if (tiles[i].key() == key)
-  #         return tiles[i].frame();
-  #     }
+  def key_for_tile(tile_string)
+    return default_key unless tile_string
 
-  #     return null;
-  #   }
+    tile = tiles.detect { |t| t.acts_as_tile?(tile_string) }
 
-  #   public function tileForKey(key:String):String {
-  #     for (var i = 0; i < tiles.length; i++) {
-  #       if (tiles[i].key() == key)
-  #         return tiles[i];
-  #     }
+    tile ? tile.key : default_key
+  end
 
-  #     return null;
-  #   }
-      
-  #     public function keys():Array {
-  #         var ary = [];
-          
-  #         for (var i = 0; i < tiles.length; i++) {
-  #             ary.push( tiles[i].key() );
-  #         }
-          
-  #         return ary;
-  #     }
+  def frame_for_key(key)
+    tile = tile_for_key(key)
 
-  #     public function count():int {
-  #         return tiles.length;
-  #     }
-  # }
+    tile ? tile.frame : nil
+  end
+
+  def tile_for_key(key)
+    tiles[ key ]
+  end
+
+  def keys
+    tiles.keys
+  end
+
+  def count
+    tiles.length
+  end
 
 end

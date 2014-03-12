@@ -71,7 +71,7 @@ class Bloxley::Actor < Bloxley::Base
     unless active?
       @active = true
       region_changed
-   end
+    end
   end
 
   def disable
